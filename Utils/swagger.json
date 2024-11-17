@@ -1,0 +1,332 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "File Management API",
+      "version": "1.1.0",
+      "description": "API for uploading, managing, and retrieving files using Multer and File System."
+    },
+    "servers": 
+    [
+      {
+      "url": "http://localhost:2000/api",
+      "description": "Local server"
+    }
+  ],
+    "paths": {
+      "/multer/upload": {
+        "post": {
+          "summary": "Upload a single file",
+          "description": "Uploads a single file to the server.",
+          "tags": ["Multer Operations"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "The file to upload."
+                    }
+                  },
+                  "required": ["file"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "File uploaded successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": { "type": "string" },
+                      "filePath": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "No file uploaded."
+            }
+          }
+        }
+      },
+      "/multer/upload-multiple": {
+        "post": {
+          "summary": "Upload multiple files",
+          "description": "Uploads multiple files to the server.",
+          "tags": ["Multer Operations"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "binary"
+                      },
+                      "description": "The files to upload."
+                    }
+                  },
+                  "required": ["files"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Files uploaded successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": { "type": "string" },
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "filename": { "type": "string" },
+                            "path": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "No files uploaded."
+            }
+          }
+        }
+      },
+      "/multer/list": {
+        "get": {
+          "summary": "List all uploaded files",
+          "description": "Retrieves a list of all uploaded files (Multer).",
+          "tags": ["Multer Operations"],
+          "responses": {
+            "200": {
+              "description": "List of files.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to list files."
+            }
+          }
+        }
+      },
+      "/multer/file/{filename}": {
+        "get": {
+          "summary": "Retrieve a file",
+          "description": "Fetches a file by its filename (Multer).",
+          "tags": ["Multer Operations"],
+          "parameters": [
+            {
+              "name": "filename",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "The name of the file to retrieve."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "File retrieved successfully."
+            },
+            "404": {
+              "description": "File not found."
+            }
+          }
+        }
+      },
+      "/file/create": {
+        "post": {
+          "summary": "Create a file",
+          "description": "Creates a file with the specified content.",
+          "tags": ["FS Operations"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fileName": { "type": "string" },
+                    "content": { "type": "string" }
+                  },
+                  "required": ["fileName", "content"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "File created successfully."
+            },
+            "500": {
+              "description": "Failed to create file."
+            }
+          }
+        }
+      },
+      "/file/{fileName}": {
+        "get": {
+          "summary": "Read a file",
+          "description": "Reads the content of a file.",
+          "tags": ["FS Operations"],
+          "parameters": [
+            {
+              "name": "fileName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "The name of the file to read."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "File content retrieved successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "content": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to read file."
+            }
+          }
+        },
+        "put": {
+          "summary": "Update a file",
+          "description": "Updates the content of a file.",
+          "tags": ["FS Operations"],
+          "parameters": [
+            {
+              "name": "fileName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "The name of the file to update."
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "newContent": { "type": "string" }
+                  },
+                  "required": ["newContent"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "File updated successfully."
+            },
+            "500": {
+              "description": "Failed to update file."
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete a file",
+          "description": "Deletes a specified file.",
+          "tags": ["FS Operations"],
+          "parameters": [
+            {
+              "name": "fileName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "The name of the file to delete."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "File deleted successfully."
+            },
+            "500": {
+              "description": "Failed to delete file."
+            }
+          }
+        }
+      },
+      "/file/": {
+        "get": {
+          "summary": "List all files",
+          "description": "Retrieves a list of all files in the file system.",
+          "tags": ["FS Operations"],
+          "responses": {
+            "200": {
+              "description": "List of files retrieved successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to list files."
+            }
+          }
+        }
+      }
+    }
+  }
+  
